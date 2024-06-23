@@ -1,0 +1,106 @@
+-- Tabela Aluno
+CREATE TABLE Aluno (
+    ID_Aluno SERIAL PRIMARY KEY,
+    Nome VARCHAR(100) NOT NULL,
+    DataNasc DATE NOT NULL,
+    Endereco VARCHAR(255) NOT NULL,
+    Telefone VARCHAR(20) NOT NULL,
+    Email VARCHAR(100) NOT NULL,
+    DataInicio DATE NOT NULL,
+    Status VARCHAR(50) NOT NULL
+);
+
+-- Tabela Instrutor
+CREATE TABLE Instrutor (
+    ID_Instrutor SERIAL PRIMARY KEY,
+    Nome VARCHAR(100) NOT NULL,
+    Especialidade VARCHAR(100) NOT NULL,
+    Certificacoes VARCHAR(255) NOT NULL,
+    AnosExperiencia INT NOT NULL,
+    Email VARCHAR(100) NOT NULL
+);
+
+-- Tabela Equipamento
+CREATE TABLE Equipamento (
+    ID_Equipamento SERIAL PRIMARY KEY,
+    Nome VARCHAR(100) NOT NULL,
+    Tipo VARCHAR(100) NOT NULL,
+    Quantidade INT NOT NULL,
+    DataAquisicao DATE NOT NULL,
+    Estado VARCHAR(50) NOT NULL,
+    ManutencaoPendente BOOLEAN NOT NULL
+);
+
+-- Tabela Plano-de-Treinamento
+CREATE TABLE Plano_de_Treinamento (
+    ID_Plano SERIAL PRIMARY KEY,
+    Nome VARCHAR(100) NOT NULL,
+    Descricao TEXT NOT NULL,
+    Duracao INT NOT NULL,
+    DataInicio DATE NOT NULL,
+    DataFim DATE NOT NULL,
+    ID_Equipamento INT NOT NULL,
+    FOREIGN KEY (ID_Equipamento) REFERENCES Equipamento(ID_Equipamento)
+);
+
+-- Tabela Avaliação-Física
+CREATE TABLE Avaliacao_Fisica (
+    ID_Avaliacao SERIAL PRIMARY KEY,
+    ID_Aluno INT NOT NULL,
+    ID_Instrutor INT NOT NULL,
+    Data DATE NOT NULL,
+    Peso DECIMAL(5, 2) NOT NULL,
+    Altura DECIMAL(4, 2) NOT NULL,
+    GorduraCorp DECIMAL(5, 2) NOT NULL,
+    MassaMagra DECIMAL(5, 2) NOT NULL,
+    Pressao VARCHAR(20) NOT NULL,
+    Observacoes TEXT NOT NULL,
+    FOREIGN KEY (ID_Aluno) REFERENCES Aluno(ID_Aluno),
+    FOREIGN KEY (ID_Instrutor) REFERENCES Instrutor(ID_Instrutor)
+);
+
+-- Tabela Inscrição
+CREATE TABLE Inscricao (
+    ID_Inscricao SERIAL PRIMARY KEY,
+    ID_Aluno INT NOT NULL,
+    ID_Plano INT NOT NULL,
+    DataInscricao DATE NOT NULL,
+    Status VARCHAR(50) NOT NULL,
+    DataExpiracao DATE NOT NULL,
+    FOREIGN KEY (ID_Aluno) REFERENCES Aluno(ID_Aluno),
+    FOREIGN KEY (ID_Plano) REFERENCES Plano_de_Treinamento(ID_Plano)
+);
+
+-- Tabela Treino
+CREATE TABLE Treino (
+    ID_Aula SERIAL PRIMARY KEY,
+    ID_Instrutor INT NOT NULL,
+    ID_Equipamento INT NOT NULL,
+    Horario TIME NOT NULL,
+    Duracao INT NOT NULL,
+    Capacidade INT NOT NULL,
+    Sala VARCHAR(100) NOT NULL,
+    FOREIGN KEY (ID_Instrutor) REFERENCES Instrutor(ID_Instrutor),
+    FOREIGN KEY (ID_Equipamento) REFERENCES Equipamento(ID_Equipamento)
+);
+
+-- Tabela Check-in/Check-out
+CREATE TABLE Check_in_Check_out (
+    ID_Checkin SERIAL PRIMARY KEY,
+    ID_Aluno INT NOT NULL,
+    Data DATE NOT NULL,
+    HoraEntrada TIME NOT NULL,
+    HoraSaida TIME NOT NULL,
+    FOREIGN KEY (ID_Aluno) REFERENCES Aluno(ID_Aluno)
+);
+
+-- Tabela Pagamento
+CREATE TABLE Pagamento (
+    ID_Pagamento SERIAL PRIMARY KEY,
+    ID_Aluno INT NOT NULL,
+    Valor DECIMAL(10, 2) NOT NULL,
+    Data DATE NOT NULL,
+    Metodo VARCHAR(50) NOT NULL,
+    Status VARCHAR(50) NOT NULL,
+    FOREIGN KEY (ID_Aluno) REFERENCES Aluno(ID_Aluno)
+);
