@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Confirmar Exclusão</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='login.css') }}">
+</head>
+<body>
+    <div class="form-container">
+        <h2>Confirmar Exclusão</h2>
+        <p>Você está prestes a excluir o seguinte aluno:</p>
+        <ul>
+            <li><strong>ID:</strong> {{ aluno[0] }}</li>
+            <li><strong>Nome:</strong> {{ aluno[1] }}</li>
+            <li><strong>Data de Nascimento:</strong> {{ aluno[2] }}</li>
+            <li><strong>Endereço:</strong> {{ aluno[3] }}</li>
+            <li><strong>Telefone:</strong> {{ aluno[4] }}</li>
+            <li><strong>Email:</strong> {{ aluno[5] }}</li>
+            <li><strong>Data de Início:</strong> {{ aluno[6] }}</li>
+            <li><strong>Status:</strong> {{ aluno[7] }}</li>
+        </ul>
+        <form action="" method="post">
+            <button type="submit">Confirmar Exclusão</button>
+        </form>
+        <a href="{{ url_for('editar_aluno', aluno_id=aluno[0]) }}" class="button-link">Cancelar</a>
+    </div>
+</body>
+</html>
