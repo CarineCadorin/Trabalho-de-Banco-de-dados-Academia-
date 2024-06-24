@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Outra Tela - Alunos</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='login.css') }}">
+</head>
+<body>
+    <div class="form-container">
+        <h2>Lista de Alunos</h2>
+        <div id="alunos-list">
+            {% for aluno in alunos %}
+                <div class="aluno-item">
+                    <a href="{{ url_for('editar_aluno', aluno_id=aluno[0]) }}">{{ aluno[1] }}</a> <!-- Nome do aluno -->
+                </div>
+            {% endfor %}
+        </div>
+        <a href="{{ url_for('index') }}" class="button-link">Voltar ao Cadastro</a>
+    </div>
+</body>
+</html>
