@@ -1,0 +1,445 @@
+-- Database: academia
+
+-- DROP DATABASE IF EXISTS academia;
+
+CREATE DATABASE academia
+    WITH
+    OWNER = postgres
+    ENCODING = 'UTF8'
+    LC_COLLATE = 'Portuguese_Brazil.1252'
+    LC_CTYPE = 'Portuguese_Brazil.1252'
+    LOCALE_PROVIDER = 'libc'
+    TABLESPACE = pg_default
+    CONNECTION LIMIT = -1
+    IS_TEMPLATE = False;
+
+------------------------------------------------------------------------------------------------------------
+
+-- Table: public.aluno
+
+-- DROP TABLE IF EXISTS public.aluno;
+
+CREATE TABLE IF NOT EXISTS public.aluno
+(
+    id_aluno integer NOT NULL DEFAULT nextval('aluno_id_aluno_seq'::regclass),
+    nome character varying(100) COLLATE pg_catalog."default" NOT NULL,
+    datanasc date NOT NULL,
+    endereco character varying(255) COLLATE pg_catalog."default" NOT NULL,
+    telefone character varying(20) COLLATE pg_catalog."default" NOT NULL,
+    email character varying(100) COLLATE pg_catalog."default" NOT NULL,
+    datainicio date NOT NULL,
+    status character varying(50) COLLATE pg_catalog."default" NOT NULL,
+    CONSTRAINT aluno_pkey PRIMARY KEY (id_aluno)
+)
+
+TABLESPACE pg_default;
+
+ALTER TABLE IF EXISTS public.aluno
+    OWNER to postgres;
+-- Index: idx_aluno_data_inicio
+
+-- DROP INDEX IF EXISTS public.idx_aluno_data_inicio;
+
+CREATE INDEX IF NOT EXISTS idx_aluno_data_inicio
+    ON public.aluno USING btree
+    (datainicio ASC NULLS LAST)
+    TABLESPACE pg_default;
+-- Index: idx_aluno_nome
+
+-- DROP INDEX IF EXISTS public.idx_aluno_nome;
+
+CREATE INDEX IF NOT EXISTS idx_aluno_nome
+    ON public.aluno USING btree
+    (nome COLLATE pg_catalog."default" ASC NULLS LAST)
+    TABLESPACE pg_default;
+-- Index: idx_aluno_status
+
+-- DROP INDEX IF EXISTS public.idx_aluno_status;
+
+CREATE INDEX IF NOT EXISTS idx_aluno_status
+    ON public.aluno USING btree
+    (status COLLATE pg_catalog."default" ASC NULLS LAST)
+    TABLESPACE pg_default;
+
+------------------------------------------------------------------------------------------------------------
+
+-- Table: public.avaliacao_fisica
+
+-- DROP TABLE IF EXISTS public.avaliacao_fisica;
+
+CREATE TABLE IF NOT EXISTS public.avaliacao_fisica
+(
+    id_avaliacao integer NOT NULL DEFAULT nextval('avaliacao_fisica_id_avaliacao_seq'::regclass),
+    id_aluno integer NOT NULL,
+    id_instrutor integer NOT NULL,
+    data date NOT NULL,
+    peso numeric(5,2) NOT NULL,
+    altura numeric(4,2) NOT NULL,
+    gorduracorp numeric(5,2) NOT NULL,
+    massamagra numeric(5,2) NOT NULL,
+    pressao character varying(20) COLLATE pg_catalog."default" NOT NULL,
+    observacoes text COLLATE pg_catalog."default" NOT NULL,
+    CONSTRAINT avaliacao_fisica_pkey PRIMARY KEY (id_avaliacao),
+    CONSTRAINT avaliacao_fisica_id_aluno_fkey FOREIGN KEY (id_aluno)
+        REFERENCES public.aluno (id_aluno) MATCH SIMPLE
+        ON UPDATE NO ACTION
+        ON DELETE NO ACTION,
+    CONSTRAINT avaliacao_fisica_id_instrutor_fkey FOREIGN KEY (id_instrutor)
+        REFERENCES public.instrutor (id_instrutor) MATCH SIMPLE
+        ON UPDATE NO ACTION
+        ON DELETE NO ACTION
+)
+
+TABLESPACE pg_default;
+
+ALTER TABLE IF EXISTS public.avaliacao_fisica
+    OWNER to postgres;
+
+------------------------------------------------------------------------------------------------------------
+
+-- Table: public.check_in_check_out
+
+-- DROP TABLE IF EXISTS public.check_in_check_out;
+
+CREATE TABLE IF NOT EXISTS public.check_in_check_out
+(
+    id_checkin integer NOT NULL DEFAULT nextval('check_in_check_out_id_checkin_seq'::regclass),
+    id_aluno integer NOT NULL,
+    data date NOT NULL,
+    horaentrada time without time zone NOT NULL,
+    horasaida time without time zone NOT NULL,
+    CONSTRAINT check_in_check_out_pkey PRIMARY KEY (id_checkin),
+    CONSTRAINT check_in_check_out_id_aluno_fkey FOREIGN KEY (id_aluno)
+        REFERENCES public.aluno (id_aluno) MATCH SIMPLE
+        ON UPDATE NO ACTION
+        ON DELETE NO ACTION
+)
+
+TABLESPACE pg_default;
+
+ALTER TABLE IF EXISTS public.check_in_check_out
+    OWNER to postgres;
+
+------------------------------------------------------------------------------------------------------------
+
+-- Table: public.equipamento
+
+-- DROP TABLE IF EXISTS public.equipamento;
+
+CREATE TABLE IF NOT EXISTS public.equipamento
+(
+    id_equipamento integer NOT NULL DEFAULT nextval('equipamento_id_equipamento_seq'::regclass),
+    nome character varying(100) COLLATE pg_catalog."default" NOT NULL,
+    tipo character varying(100) COLLATE pg_catalog."default" NOT NULL,
+    quantidade integer NOT NULL,
+    dataaquisicao date NOT NULL,
+    estado character varying(50) COLLATE pg_catalog."default" NOT NULL,
+    manutencaopendente boolean NOT NULL,
+    CONSTRAINT equipamento_pkey PRIMARY KEY (id_equipamento)
+)
+
+TABLESPACE pg_default;
+
+ALTER TABLE IF EXISTS public.equipamento
+    OWNER to postgres;
+
+------------------------------------------------------------------------------------------------------------
+
+-- Table: public.inscricao
+
+-- DROP TABLE IF EXISTS public.inscricao;
+
+CREATE TABLE IF NOT EXISTS public.inscricao
+(
+    id_inscricao integer NOT NULL DEFAULT nextval('inscricao_id_inscricao_seq'::regclass),
+    id_aluno integer NOT NULL,
+    id_plano integer NOT NULL,
+    datainscricao date NOT NULL,
+    status character varying(50) COLLATE pg_catalog."default" NOT NULL,
+    dataexpiracao date NOT NULL,
+    CONSTRAINT inscricao_pkey PRIMARY KEY (id_inscricao),
+    CONSTRAINT inscricao_id_aluno_fkey FOREIGN KEY (id_aluno)
+        REFERENCES public.aluno (id_aluno) MATCH SIMPLE
+        ON UPDATE NO ACTION
+        ON DELETE NO ACTION,
+    CONSTRAINT inscricao_id_plano_fkey FOREIGN KEY (id_plano)
+        REFERENCES public.plano_de_treinamento (id_plano) MATCH SIMPLE
+        ON UPDATE NO ACTION
+        ON DELETE NO ACTION
+)
+
+TABLESPACE pg_default;
+
+ALTER TABLE IF EXISTS public.inscricao
+    OWNER to postgres;
+
+-- Trigger: inscricao_trigger
+
+-- DROP TRIGGER IF EXISTS inscricao_trigger ON public.inscricao;
+
+CREATE OR REPLACE TRIGGER inscricao_trigger
+    AFTER INSERT
+    ON public.inscricao
+    FOR EACH ROW
+    EXECUTE FUNCTION public.atualizar_quantidade_equipamento();
+
+------------------------------------------------------------------------------------------------------------
+
+-- Table: public.instrutor
+
+-- DROP TABLE IF EXISTS public.instrutor;
+
+CREATE TABLE IF NOT EXISTS public.instrutor
+(
+    id_instrutor integer NOT NULL DEFAULT nextval('instrutor_id_instrutor_seq'::regclass),
+    nome character varying(100) COLLATE pg_catalog."default" NOT NULL,
+    especialidade character varying(100) COLLATE pg_catalog."default" NOT NULL,
+    certificacoes character varying(255) COLLATE pg_catalog."default" NOT NULL,
+    anosexperiencia integer NOT NULL,
+    email character varying(100) COLLATE pg_catalog."default" NOT NULL,
+    CONSTRAINT instrutor_pkey PRIMARY KEY (id_instrutor)
+)
+
+TABLESPACE pg_default;
+
+ALTER TABLE IF EXISTS public.instrutor
+    OWNER to postgres;
+-- Index: idx_instrutor_especialidade
+
+-- DROP INDEX IF EXISTS public.idx_instrutor_especialidade;
+
+CREATE INDEX IF NOT EXISTS idx_instrutor_especialidade
+    ON public.instrutor USING btree
+    (especialidade COLLATE pg_catalog."default" ASC NULLS LAST)
+    TABLESPACE pg_default;
+-- Index: idx_instrutor_nome
+
+-- DROP INDEX IF EXISTS public.idx_instrutor_nome;
+
+CREATE INDEX IF NOT EXISTS idx_instrutor_nome
+    ON public.instrutor USING btree
+    (nome COLLATE pg_catalog."default" ASC NULLS LAST)
+    TABLESPACE pg_default;
+
+------------------------------------------------------------------------------------------------------------
+
+-- Table: public.pagamento
+
+-- DROP TABLE IF EXISTS public.pagamento;
+
+CREATE TABLE IF NOT EXISTS public.pagamento
+(
+    id_pagamento integer NOT NULL DEFAULT nextval('pagamento_id_pagamento_seq'::regclass),
+    id_aluno integer NOT NULL,
+    valor numeric(10,2) NOT NULL,
+    data date NOT NULL,
+    metodo character varying(50) COLLATE pg_catalog."default" NOT NULL,
+    status character varying(50) COLLATE pg_catalog."default" NOT NULL,
+    CONSTRAINT pagamento_pkey PRIMARY KEY (id_pagamento),
+    CONSTRAINT pagamento_id_aluno_fkey FOREIGN KEY (id_aluno)
+        REFERENCES public.aluno (id_aluno) MATCH SIMPLE
+        ON UPDATE NO ACTION
+        ON DELETE NO ACTION
+)
+
+TABLESPACE pg_default;
+
+ALTER TABLE IF EXISTS public.pagamento
+    OWNER to postgres;
+-- Index: idx_pagamento_aluno
+
+-- DROP INDEX IF EXISTS public.idx_pagamento_aluno;
+
+CREATE INDEX IF NOT EXISTS idx_pagamento_aluno
+    ON public.pagamento USING btree
+    (id_aluno ASC NULLS LAST)
+    TABLESPACE pg_default;
+-- Index: idx_pagamento_data
+
+-- DROP INDEX IF EXISTS public.idx_pagamento_data;
+
+CREATE INDEX IF NOT EXISTS idx_pagamento_data
+    ON public.pagamento USING btree
+    (data ASC NULLS LAST)
+    TABLESPACE pg_default;
+
+------------------------------------------------------------------------------------------------------------
+
+-- Table: public.plano_de_treinamento
+
+-- DROP TABLE IF EXISTS public.plano_de_treinamento;
+
+CREATE TABLE IF NOT EXISTS public.plano_de_treinamento
+(
+    id_plano integer NOT NULL DEFAULT nextval('plano_de_treinamento_id_plano_seq'::regclass),
+    nome character varying(100) COLLATE pg_catalog."default" NOT NULL,
+    descricao text COLLATE pg_catalog."default" NOT NULL,
+    duracao integer NOT NULL,
+    datainicio date NOT NULL,
+    datafim date NOT NULL,
+    id_equipamento integer NOT NULL,
+    CONSTRAINT plano_de_treinamento_pkey PRIMARY KEY (id_plano),
+    CONSTRAINT plano_de_treinamento_id_equipamento_fkey FOREIGN KEY (id_equipamento)
+        REFERENCES public.equipamento (id_equipamento) MATCH SIMPLE
+        ON UPDATE NO ACTION
+        ON DELETE NO ACTION
+)
+
+TABLESPACE pg_default;
+
+ALTER TABLE IF EXISTS public.plano_de_treinamento
+    OWNER to postgres;
+
+------------------------------------------------------------------------------------------------------------
+
+-- Table: public.treino
+
+-- DROP TABLE IF EXISTS public.treino;
+
+CREATE TABLE IF NOT EXISTS public.treino
+(
+    id_aula integer NOT NULL DEFAULT nextval('treino_id_aula_seq'::regclass),
+    id_instrutor integer NOT NULL,
+    id_equipamento integer NOT NULL,
+    horario time without time zone NOT NULL,
+    duracao integer NOT NULL,
+    capacidade integer NOT NULL,
+    sala character varying(100) COLLATE pg_catalog."default" NOT NULL,
+    CONSTRAINT treino_pkey PRIMARY KEY (id_aula),
+    CONSTRAINT treino_id_equipamento_fkey FOREIGN KEY (id_equipamento)
+        REFERENCES public.equipamento (id_equipamento) MATCH SIMPLE
+        ON UPDATE NO ACTION
+        ON DELETE NO ACTION,
+    CONSTRAINT treino_id_instrutor_fkey FOREIGN KEY (id_instrutor)
+        REFERENCES public.instrutor (id_instrutor) MATCH SIMPLE
+        ON UPDATE NO ACTION
+        ON DELETE NO ACTION
+)
+
+TABLESPACE pg_default;
+
+ALTER TABLE IF EXISTS public.treino
+    OWNER to postgres;
+-- Index: idx_treino_horario
+
+-- DROP INDEX IF EXISTS public.idx_treino_horario;
+
+CREATE INDEX IF NOT EXISTS idx_treino_horario
+    ON public.treino USING btree
+    (horario ASC NULLS LAST)
+    TABLESPACE pg_default;
+-- Index: idx_treino_instrutor
+
+-- DROP INDEX IF EXISTS public.idx_treino_instrutor;
+
+CREATE INDEX IF NOT EXISTS idx_treino_instrutor
+    ON public.treino USING btree
+    (id_instrutor ASC NULLS LAST)
+    TABLESPACE pg_default;
+
+------------------------------------------------------------------------------------------------------------
+
+-- View: public.vw_membros_ativos_por_plano
+
+-- DROP VIEW public.vw_membros_ativos_por_plano;
+
+CREATE OR REPLACE VIEW public.vw_membros_ativos_por_plano
+ AS
+ SELECT p.nome AS nome_plano,
+    count(i.id_inscricao) AS quantidade_membros_ativos
+   FROM inscricao i
+     JOIN plano_de_treinamento p ON i.id_plano = p.id_plano
+  WHERE i.status::text = 'Ativo'::text
+  GROUP BY p.nome;
+
+ALTER TABLE public.vw_membros_ativos_por_plano
+    OWNER TO postgres;
+
+------------------------------------------------------------------------------------------------------------
+
+-- View: public.vw_membros_por_instrutor
+
+-- DROP VIEW public.vw_membros_por_instrutor;
+
+CREATE OR REPLACE VIEW public.vw_membros_por_instrutor
+ AS
+ SELECT i.nome AS nome_instrutor,
+    count(DISTINCT c.id_aluno) AS quantidade_membros
+   FROM instrutor i
+     LEFT JOIN treino t ON i.id_instrutor = t.id_instrutor
+     LEFT JOIN check_in_check_out c ON t.id_aula = c.id_checkin
+  GROUP BY i.nome;
+
+ALTER TABLE public.vw_membros_por_instrutor
+    OWNER TO postgres;
+
+------------------------------------------------------------------------------------------------------------
+
+-- View: public.vw_receita_mensal
+
+-- DROP VIEW public.vw_receita_mensal;
+
+CREATE OR REPLACE VIEW public.vw_receita_mensal
+ AS
+ SELECT date_trunc('month'::text, data::timestamp with time zone) AS ano_mes,
+    sum(valor) AS receita_total
+   FROM pagamento p
+  WHERE data >= (CURRENT_DATE - '1 year'::interval)
+  GROUP BY (date_trunc('month'::text, data::timestamp with time zone));
+
+ALTER TABLE public.vw_receita_mensal
+    OWNER TO postgres;
+
+------------------------------------------------------------------------------------------------------------
+
+--Esta função insere um novo aluno na tabela Aluno e retorna o ID do aluno inserido.
+
+CREATE OR REPLACE FUNCTION inserir_aluno(
+    p_id_aluno INT,
+    p_nome VARCHAR(100),
+    p_data_nasc DATE,
+    p_endereco VARCHAR(255),
+    p_telefone VARCHAR(20),
+    p_email VARCHAR(100),
+    p_data_inicio DATE,
+    p_status VARCHAR(50)
+) RETURNS INT AS $$
+BEGIN
+    -- Insere um novo aluno com o ID especificado
+    INSERT INTO Aluno (ID_Aluno, Nome, DataNasc, Endereco, Telefone, Email, DataInicio, Status)
+    VALUES (p_id_aluno, p_nome, p_data_nasc, p_endereco, p_telefone, p_email, p_data_inicio, p_status);
+    
+    RETURN p_id_aluno;
+END;
+$$ LANGUAGE plpgsql;
+
+------------------------------------------------------------------------------------------------------------
+
+--Esta função calcula o IMC de um aluno com base no peso e altura registrados em uma avaliação física.
+CREATE OR REPLACE FUNCTION calcular_imc(
+    p_peso DECIMAL(5, 2),
+    p_altura DECIMAL(4, 2)
+) RETURNS DECIMAL(5, 2) AS $$
+DECLARE
+    imc DECIMAL(5, 2);
+BEGIN
+    imc := p_peso / (p_altura * p_altura);
+    RETURN imc;
+END;
+$$ LANGUAGE plpgsql;
+
+------------------------------------------------------------------------------------------------------------
+
+--Esta função atualiza o status de pagamento de um aluno na tabela Pagamento com base no ID do aluno e na data do pagamento.
+CREATE OR REPLACE FUNCTION atualizar_status_pagamento(
+    p_id_aluno INT,
+    p_data_pagamento DATE,
+    p_status VARCHAR(50)
+) RETURNS VOID AS $$
+BEGIN
+    UPDATE Pagamento
+    SET Status = p_status
+    WHERE ID_Aluno = p_id_aluno
+      AND Data = p_data_pagamento;
+END;
+$$ LANGUAGE plpgsql;

@@ -1,0 +1,170 @@
+-- Populando a tabela Equipamento
+INSERT INTO Equipamento (ID_Equipamento, Nome, Tipo, Quantidade, DataAquisicao, Estado, ManutencaoPendente)
+VALUES
+(1, 'Esteira', 'Cardio', 10, '2022-01-01', 'Bom', false),
+(2, 'Bicicleta', 'Cardio', 5, '2022-02-01', 'Bom', false),
+(3, 'Halteres', 'Musculação', 20, '2022-03-01', 'Bom', false),
+(4, 'Máquina de Remo', 'Cardio', 2, '2022-04-01', 'Ruim', true),
+(5, 'Leg Press', 'Musculação', 1, '2022-05-01', 'Bom', false),
+(6, 'Elíptico', 'Cardio', 3, '2022-06-01', 'Bom', false),
+(7, 'Cadeira Extensora', 'Musculação', 4, '2022-07-01', 'Bom', false),
+(8, 'Puxador', 'Musculação', 2, '2022-08-01', 'Ruim', true),
+(9, 'Bicicleta Horizontal', 'Cardio', 3, '2022-09-01', 'Bom', false),
+(10, 'Esteira Curva', 'Cardio', 2, '2022-10-01', 'Ruim', true),
+(11, 'Smith Machine', 'Musculação', 1, '2022-11-01', 'Bom', false),
+(12, 'Banco Supino', 'Musculação', 5, '2022-12-01', 'Bom', false),
+(13, 'Step', 'Cardio', 10, '2023-01-01', 'Bom', false),
+(14, 'Corda de Pular', 'Cardio', 15, '2023-02-01', 'Bom', false),
+(15, 'Kettlebell', 'Musculação', 25, '2023-03-01', 'Bom', false);
+
+-- Populando a tabela Aluno
+INSERT INTO Aluno (ID_Aluno, Nome, DataNasc, Endereco, Telefone, Email, DataInicio, Status)
+VALUES
+(1, 'Carlos Silva', '1990-05-10', 'Rua A, 123', '1111-1111', 'carlos@email.com', '2023-01-01', 'Ativo'),
+(2, 'Maria Oliveira', '1985-08-22', 'Rua B, 456', '2222-2222', 'maria@email.com', '2023-02-01', 'Ativo'),
+(3, 'João Souza', '1992-07-15', 'Rua C, 789', '3333-3333', 'joao@email.com', '2023-03-01', 'Inativo'),
+(4, 'Ana Santos', '1988-11-30', 'Rua D, 101', '4444-4444', 'ana@email.com', '2023-04-01', 'Ativo'),
+(5, 'Pedro Lima', '1995-12-12', 'Rua E, 202', '5555-5555', 'pedro@email.com', '2023-05-01', 'Ativo'),
+(6, 'Paula Mendes', '1991-09-20', 'Rua F, 303', '6666-6666', 'paula@email.com', '2023-06-01', 'Inativo'),
+(7, 'Ricardo Alves', '1983-04-18', 'Rua G, 404', '7777-7777', 'ricardo@email.com', '2023-07-01', 'Ativo'),
+(8, 'Fernanda Costa', '1987-02-05', 'Rua H, 505', '8888-8888', 'fernanda@email.com', '2023-08-01', 'Ativo'),
+(9, 'Bruno Martins', '1993-06-25', 'Rua I, 606', '9999-9999', 'bruno@email.com', '2023-09-01', 'Ativo'),
+(10, 'Renata Pereira', '1989-03-14', 'Rua J, 707', '1010-1010', 'renata@email.com', '2023-10-01', 'Ativo'),
+(11, 'Thiago Ramos', '1986-12-01', 'Rua K, 808', '1111-1112', 'thiago@email.com', '2023-11-01', 'Ativo'),
+(12, 'Juliana Barbosa', '1994-01-19', 'Rua L, 909', '1212-1212', 'juliana@email.com', '2023-12-01', 'Inativo'),
+(13, 'Roberto Ferreira', '1990-05-17', 'Rua M, 111', '1313-1313', 'roberto@email.com', '2023-01-01', 'Ativo'),
+(14, 'Débora Nascimento', '1985-08-27', 'Rua N, 222', '1414-1414', 'debora@email.com', '2023-02-01', 'Ativo'),
+(15, 'Leonardo Pinto', '1992-07-09', 'Rua O, 333', '1515-1515', 'leonardo@email.com', '2023-03-01', 'Ativo');
+
+-- Populando a tabela Instrutor
+INSERT INTO Instrutor (ID_Instrutor, Nome, Especialidade, Certificacoes, AnosExperiencia, Email)
+VALUES
+(1, 'Alice', 'Cardio', 'Certificação A', 5, 'alice@email.com'),
+(2, 'Bruno', 'Musculação', 'Certificação B', 7, 'bruno@email.com'),
+(3, 'Carlos', 'Yoga', 'Certificação C', 10, 'carlos@email.com'),
+(4, 'Daniela', 'Pilates', 'Certificação D', 8, 'daniela@email.com'),
+(5, 'Eduardo', 'Crossfit', 'Certificação E', 6, 'eduardo@email.com'),
+(6, 'Fernanda', 'Zumba', 'Certificação F', 9, 'fernanda@email.com'),
+(7, 'Gabriel', 'Cardio', 'Certificação G', 4, 'gabriel@email.com'),
+(8, 'Helena', 'Musculação', 'Certificação H', 5, 'helena@email.com'),
+(9, 'Igor', 'Yoga', 'Certificação I', 7, 'igor@email.com'),
+(10, 'Julia', 'Pilates', 'Certificação J', 10, 'julia@email.com'),
+(11, 'Kleber', 'Crossfit', 'Certificação K', 8, 'kleber@email.com'),
+(12, 'Larissa', 'Zumba', 'Certificação L', 6, 'larissa@email.com'),
+(13, 'Marcos', 'Cardio', 'Certificação M', 9, 'marcos@email.com'),
+(14, 'Natalia', 'Musculação', 'Certificação N', 4, 'natalia@email.com'),
+(15, 'Otavio', 'Yoga', 'Certificação O', 5, 'otavio@email.com');
+
+-- Populando a tabela Plano_de_Treinamento
+INSERT INTO Plano_de_Treinamento (ID_Plano, Nome, Descricao, Duracao, DataInicio, DataFim, ID_Equipamento)
+VALUES
+(1, 'Plano Básico', 'Acesso livre', 30, '2023-01-01', '2023-12-31', 1),
+(2, 'Plano Premium', 'Acesso + Personal Trainer', 30, '2023-01-01', '2023-12-31', 2),
+(3, 'Plano VIP', 'Acesso total', 30, '2023-01-01', '2023-12-31', 3),
+(4, 'Plano Família', 'Acesso para família', 30, '2023-01-01', '2023-12-31', 4),
+(5, 'Plano Estudante', 'Acesso para estudantes', 30, '2023-01-01', '2023-12-31', 5),
+(6, 'Plano Senior', 'Acesso para idosos', 30, '2023-01-01', '2023-12-31', 6),
+(7, 'Plano Corporativo', 'Acesso para empresas', 30, '2023-01-01', '2023-12-31', 7),
+(8, 'Plano Fit', 'Acesso + Nutricionista', 30, '2023-01-01', '2023-12-31', 8),
+(9, 'Plano Yoga', 'Acesso às aulas de Yoga', 30, '2023-01-01', '2023-12-31', 9),
+(10, 'Plano Pilates', 'Acesso às aulas de Pilates', 30, '2023-01-01', '2023-12-31', 10),
+(11, 'Plano Crossfit', 'Acesso às aulas de Crossfit', 30, '2023-01-01', '2023-12-31', 11),
+(12, 'Plano Zumba', 'Acesso às aulas de Zumba', 30, '2023-01-01', '2023-12-31', 12),
+(13, 'Plano Cardio', 'Acesso às aulas de Cardio', 30, '2023-01-01', '2023-12-31', 13),
+(14, 'Plano Musculação', 'Acesso às aulas de Musculação', 30, '2023-01-01', '2023-12-31', 14),
+(15, 'Plano Personal', 'Acesso com Personal Trainer', 30, '2023-01-01', '2023-12-31', 15);
+
+-- Populando a tabela Inscrição
+INSERT INTO Inscricao (ID_Inscricao, ID_Aluno, ID_Plano, DataInscricao, Status, DataExpiracao)
+VALUES
+(1, 1, 1, '2023-01-01', 'Ativo', '2023-12-31'),
+(2, 2, 2, '2023-02-01', 'Ativo', '2023-12-31'),
+(3, 3, 3, '2023-03-01', 'Inativo', '2023-12-31'),
+(4, 4, 4, '2023-04-01', 'Ativo', '2023-12-31'),
+(5, 5, 5, '2023-05-01', 'Ativo', '2023-12-31'),
+(6, 6, 6, '2023-06-01', 'Inativo', '2023-12-31'),
+(7, 7, 7, '2023-07-01', 'Ativo', '2023-12-31'),
+(8, 8, 8, '2023-08-01', 'Ativo', '2023-12-31'),
+(9, 9, 9, '2023-09-01', 'Ativo', '2023-12-31'),
+(10, 10, 10, '2023-10-01', 'Ativo', '2023-12-31'),
+(11, 11, 11, '2023-11-01', 'Ativo', '2023-12-31'),
+(12, 12, 12, '2023-12-01', 'Inativo', '2023-12-31'),
+(13, 13, 13, '2023-01-01', 'Ativo', '2023-12-31'),
+(14, 14, 14, '2023-02-01', 'Ativo', '2023-12-31'),
+(15, 15, 15, '2023-03-01', 'Ativo', '2023-12-31');
+
+-- Populando a tabela Avaliacao_Fisica
+INSERT INTO Avaliacao_Fisica (ID_Avaliacao, ID_Aluno, ID_Instrutor, Data, Peso, Altura, GorduraCorp, MassaMagra, Pressao, Observacoes)
+VALUES
+(1, 1, 1, '2023-01-01', 70.0, 1.75, 20.0, 50.0, '120/80', 'Nenhuma'),
+(2, 2, 2, '2023-02-01', 60.0, 1.65, 22.0, 45.0, '120/80', 'Nenhuma'),
+(3, 3, 3, '2023-03-01', 80.0, 1.80, 25.0, 55.0, '130/85', 'Nenhuma'),
+(4, 4, 4, '2023-04-01', 90.0, 1.85, 30.0, 60.0, '140/90', 'Nenhuma'),
+(5, 5, 5, '2023-05-01', 75.0, 1.70, 18.0, 52.0, '120/80', 'Nenhuma'),
+(6, 6, 6, '2023-06-01', 65.0, 1.60, 20.0, 48.0, '110/70', 'Nenhuma'),
+(7, 7, 7, '2023-07-01', 85.0, 1.90, 28.0, 58.0, '130/85', 'Nenhuma'),
+(8, 8, 8, '2023-08-01', 55.0, 1.55, 25.0, 40.0, '120/80', 'Nenhuma'),
+(9, 9, 9, '2023-09-01', 95.0, 1.95, 35.0, 65.0, '140/90', 'Nenhuma'),
+(10, 10, 10, '2023-10-01', 70.0, 1.75, 20.0, 50.0, '120/80', 'Nenhuma'),
+(11, 11, 11, '2023-11-01', 60.0, 1.65, 22.0, 45.0, '120/80', 'Nenhuma'),
+(12, 12, 12, '2023-12-01', 80.0, 1.80, 25.0, 55.0, '130/85', 'Nenhuma'),
+(13, 13, 13, '2023-01-01', 90.0, 1.85, 30.0, 60.0, '140/90', 'Nenhuma'),
+(14, 14, 14, '2023-02-01', 75.0, 1.70, 18.0, 52.0, '120/80', 'Nenhuma'),
+(15, 15, 15, '2023-03-01', 65.0, 1.60, 20.0, 48.0, '110/70', 'Nenhuma');
+
+-- Populando a tabela Treino
+INSERT INTO Treino (ID_Aula, ID_Instrutor, ID_Equipamento, Horario, Duracao, Capacidade, Sala)
+VALUES
+(1, 1, 1, '08:00:00', 60, 10, 'Sala 1'),
+(2, 2, 2, '09:00:00', 60, 15, 'Sala 2'),
+(3, 3, 3, '10:00:00', 60, 20, 'Sala 3'),
+(4, 4, 4, '11:00:00', 60, 25, 'Sala 4'),
+(5, 5, 5, '12:00:00', 60, 10, 'Sala 5'),
+(6, 6, 6, '13:00:00', 60, 15, 'Sala 6'),
+(7, 7, 7, '14:00:00', 60, 20, 'Sala 7'),
+(8, 8, 8, '15:00:00', 60, 25, 'Sala 8'),
+(9, 9, 9, '16:00:00', 60, 10, 'Sala 9'),
+(10, 10, 10,'17:00:00', 60, 15, 'Sala 10'),
+(11, 11, 11,'18:00:00', 60, 20, 'Sala 11'),
+(12, 12, 12,'19:00:00', 60, 25, 'Sala 12'),
+(13, 13, 13,'20:00:00', 60, 10, 'Sala 13'),
+(14, 14, 14,'21:00:00', 60, 15, 'Sala 14'),
+(15, 15, 15,'22:00:00', 60, 20, 'Sala 15');
+
+-- Populando a tabela Check-in/Check-out
+INSERT INTO Check_in_Check_out (ID_Checkin, ID_Aluno, Data, HoraEntrada, HoraSaida)
+VALUES
+(1, 1, '2023-01-01', '08:00:00', '09:00:00'),
+(2, 2, '2023-02-01', '09:00:00', '10:00:00'),
+(3, 3, '2023-03-01', '10:00:00', '11:00:00'),
+(4, 4, '2023-04-01', '11:00:00', '12:00:00'),
+(5, 5, '2023-05-01', '12:00:00', '13:00:00'),
+(6, 6, '2023-06-01', '13:00:00', '14:00:00'),
+(7, 7, '2023-07-01', '14:00:00', '15:00:00'),
+(8, 8, '2023-08-01', '15:00:00', '16:00:00'),
+(9, 9, '2023-09-01', '16:00:00', '17:00:00'),
+(10, 10, '2023-10-01', '17:00:00', '18:00:00'),
+(11, 11, '2023-11-01', '18:00:00', '19:00:00'),
+(12, 12, '2023-12-01', '19:00:00', '20:00:00'),
+(13, 13, '2023-01-01', '08:00:00', '09:00:00'),
+(14, 14, '2023-02-01', '09:00:00', '10:00:00'),
+(15, 15, '2023-03-01', '10:00:00', '11:00:00');
+
+-- Populando a tabela Pagamento
+INSERT INTO Pagamento (ID_Pagamento, ID_Aluno, Valor, Data, Metodo, Status)
+VALUES
+(1, 1, 100.0, '2023-01-01', 'Cartão', 'Pago'),
+(2, 2, 200.0, '2023-02-01', 'Cartão', 'Pago'),
+(3, 3, 300.0, '2023-03-01', 'Cartão', 'Pendente'),
+(4, 4, 400.0, '2023-04-01', 'Cartão', 'Pago'),
+(5, 5, 500.0, '2023-05-01', 'Cartão', 'Pago'),
+(6, 6, 600.0, '2023-06-01', 'Cartão', 'Pendente'),
+(7, 7, 700.0, '2023-07-01', 'Cartão', 'Pago'),
+(8, 8, 800.0, '2023-08-01', 'Cartão', 'Pago'),
+(9, 9, 900.0, '2023-09-01', 'Cartão', 'Pago'),
+(10, 10, 1000.0, '2023-10-01', 'Cartão', 'Pago'),
+(11, 11, 1100.0, '2023-11-01', 'Cartão', 'Pago'),
+(12, 12, 1200.0, '2023-12-01', 'Cartão', 'Pendente'),
+(13, 13, 1300.0, '2023-01-01', 'Cartão', 'Pago'),
+(14, 14, 1400.0, '2023-02-01', 'Cartão', 'Pago'),
+(15, 15, 1500.0, '2023-03-01', 'Cartão', 'Pago');
