@@ -298,6 +298,50 @@ VALUES
 (15, 15, 1500.0, '2023-03-01', 'Cartão', 'Pago');
 
 
+/*View de Membros Ativos por Tipo de Plano:
+Esta view mostrará o número de membros ativos matriculados em cada tipo de plano de treinamento.
+*/
+CREATE VIEW vw_Membros_Ativos_Por_Plano AS
+SELECT
+    P.Nome AS Nome_Plano,
+    COUNT(I.ID_Inscricao) AS Quantidade_Membros_Ativos
+FROM
+    Inscricao I
+JOIN
+    Plano_de_Treinamento P ON I.ID_Plano = P.ID_Plano
+WHERE
+    I.Status = 'Ativo'
+GROUP BY
+    P.Nome;
+-----------------------------------------------------
+/*View de Receita Mensal por Ano e Mês:
+Esta view calcula a receita total gerada por mês no último ano.*/
+CREATE VIEW vw_Receita_Mensal AS
+SELECT
+    DATE_TRUNC('month', P.Data) AS Ano_Mes,
+    SUM(P.Valor) AS Receita_Total
+FROM
+    Pagamento P
+WHERE
+    P.Data >= CURRENT_DATE - INTERVAL '1 year'
+GROUP BY
+    Ano_Mes;
+-----------------------------------------------------
+/*View de Quantidade de Membros por Instrutor:
+Esta view mostra quantos membros cada instrutor está treinando atualmente.*/
+CREATE VIEW vw_Membros_Por_Instrutor AS
+SELECT
+    I.Nome AS Nome_Instrutor,
+    COUNT(DISTINCT C.ID_Aluno) AS Quantidade_Membros
+FROM
+    Instrutor I
+LEFT JOIN
+    Treino T ON I.ID_Instrutor = T.ID_Instrutor
+LEFT JOIN
+    Check_in_Check_out C ON T.ID_Aula = C.ID_Checkin
+GROUP BY
+    I.Nome;
+
 -- Criar o trigger
 CREATE OR REPLACE FUNCTION atualizar_quantidade_equipamento()
 RETURNS TRIGGER AS $$
@@ -320,3 +364,152 @@ AFTER INSERT ON Inscricao
 FOR EACH ROW
 EXECUTE FUNCTION atualizar_quantidade_equipamento();
 
+--Esta função insere um novo aluno na tabela Aluno e retorna o ID do aluno inserido.
+
+CREATE OR REPLACE FUNCTION inserir_aluno(
+    p_id_aluno INT,
+    p_nome VARCHAR(100),
+    p_data_nasc DATE,
+    p_endereco VARCHAR(255),
+    p_telefone VARCHAR(20),
+    p_email VARCHAR(100),
+    p_data_inicio DATE,
+    p_status VARCHAR(50)
+) RETURNS INT AS $$
+BEGIN
+    -- Insere um novo aluno com o ID especificado
+    INSERT INTO Aluno (ID_Aluno, Nome, DataNasc, Endereco, Telefone, Email, DataInicio, Status)
+    VALUES (p_id_aluno, p_nome, p_data_nasc, p_endereco, p_telefone, p_email, p_data_inicio, p_status);
+    
+    RETURN p_id_aluno;
+END;
+$$ LANGUAGE plpgsql;
+
+
+
+--Esta função calcula o IMC de um aluno com base no peso e altura registrados em uma avaliação física.
+CREATE OR REPLACE FUNCTION calcular_imc(
+    p_peso DECIMAL(5, 2),
+    p_altura DECIMAL(4, 2)
+) RETURNS DECIMAL(5, 2) AS $$
+DECLARE
+    imc DECIMAL(5, 2);
+BEGIN
+    imc := p_peso / (p_altura * p_altura);
+    RETURN imc;
+END;
+$$ LANGUAGE plpgsql;
+--Esta função atualiza o status de pagamento de um aluno na tabela Pagamento com base no ID do aluno e na data do pagamento.
+CREATE OR REPLACE FUNCTION atualizar_status_pagamento(
+    p_id_aluno INT,
+    p_data_pagamento DATE,
+    p_status VARCHAR(50)
+) RETURNS VOID AS $$
+BEGIN
+    UPDATE Pagamento
+    SET Status = p_status
+    WHERE ID_Aluno = p_id_aluno
+      AND Data = p_data_pagamento;
+END;
+$$ LANGUAGE plpgsql;
+
+--functions
+
+-- Testando a função inserir_aluno
+SELECT inserir_aluno(16, 'Carine', '2005-06-16', 'Rua das Flores, 123', '(11) 98765-4321', 'carine.ghisi@gmail.com', '2023-01-10', 'Ativo');
+SELECT inserir_aluno(17, 'Diogo', '2005-06-16', 'Rua das Flores, 123', '(11) 98765-4321', 'diogo@gmail.com', '2023-01-10', 'Inativo');
+SELECT inserir_aluno(18, 'Vinicius', '2005-06-16', 'Rua das Flores, 123', '(11) 98765-4321', 'vinicius@gmail.com', '2023-01-10', 'Ativo');
+
+-- Testando a função calcular_imc
+SELECT calcular_imc(75.5, 1.80);
+SELECT calcular_imc(65.2, 1.75);
+SELECT calcular_imc(82.0, 1.90);
+---------------------------------------------------
+-- Testando a função atualizar_status_pagamento
+UPDATE Pagamento SET Status = 'Pago' WHERE ID_Pagamento = 1;
+SELECT atualizar_status_pagamento(1, '2023-01-15', 'Pago');
+SELECT atualizar_status_pagamento(2, '2022-12-05', 'Pendente');
+SELECT atualizar_status_pagamento(3, '2023-03-01', 'Pago');
+
+CREATE INDEX idx_aluno_nome ON Aluno (Nome);
+CREATE INDEX idx_aluno_data_inicio ON Aluno (DataInicio);
+CREATE INDEX idx_aluno_status ON Aluno (Status);
+
+--------------------------
+CREATE INDEX idx_instrutor_nome ON Instrutor (Nome);
+CREATE INDEX idx_instrutor_especialidade ON Instrutor (Especialidade);
+-------------------------
+CREATE INDEX idx_treino_instrutor ON Treino (ID_Instrutor);
+CREATE INDEX idx_treino_horario ON Treino (Horario);
+------------------------
+CREATE INDEX idx_pagamento_aluno ON Pagamento (ID_Aluno);
+CREATE INDEX idx_pagamento_data ON Pagamento (Data);
+
+---------------------------------------------
+-- Exemplo com a tabela Aluno e índice no campo Nome
+EXPLAIN ANALYZE SELECT * FROM Aluno WHERE Nome = 'João Silva';
+-- Exemplo com junção entre Aluno e Inscrição, usando índices
+EXPLAIN ANALYZE SELECT A.Nome, I.ID_Plano 
+FROM Aluno A
+JOIN Inscricao I ON A.ID_Aluno = I.ID_Aluno
+WHERE A.Status = 'Ativo';
+-- Exemplo com ordenação usando índice
+EXPLAIN ANALYZE SELECT * FROM Aluno ORDER BY DataInicio DESC;
+EXPLAIN ANALYZE SELECT * FROM Aluno WHERE Nome = 'João Silva';
+------------------------------------------------------------
+
+--Quantos membros ativos estão matriculados em cada tipo de plano de assinatura?
+
+SELECT
+    p.Nome AS Plano,
+    COUNT(i.ID_Aluno) AS MembrosAtivos
+FROM
+    Inscricao i
+    JOIN Plano_de_Treinamento p ON i.ID_Plano = p.ID_Plano
+WHERE
+    i.Status = 'Ativo'
+GROUP BY
+    p.Nome;
+
+----------------------------------------------------------
+--Qual é a receita total gerada por mês no último ano?
+
+SELECT
+    DATE_TRUNC('month', P.Data) AS Ano_Mes,
+    SUM(P.Valor) AS Receita_Total
+FROM
+    Pagamento P
+WHERE
+    P.Data >= CURRENT_DATE - INTERVAL '1 year'
+GROUP BY
+    Ano_Mes;
+
+------------------------------------------------------------
+--Quais são as aulas mais populares e quantos membros estão inscritos em cada uma?
+
+SELECT
+    T.ID_Aula,
+    COUNT(C.ID_Checkin) AS Quantidade_Membros,
+    T.Sala
+FROM
+    Treino T
+LEFT JOIN
+    Check_in_Check_out C ON T.ID_Aula = C.ID_Checkin
+GROUP BY
+    T.ID_Aula, T.Sala
+ORDER BY
+    Quantidade_Membros DESC;
+
+-----------------------------------------------------------
+--Quantos membros cada treinador está treinando atualmente?
+SELECT
+    I.Nome AS Nome_Instrutor,
+    COUNT(DISTINCT C.ID_Aluno) AS Quantidade_Membros
+FROM
+    Instrutor I
+LEFT JOIN
+    Treino T ON I.ID_Instrutor = T.ID_Instrutor
+LEFT JOIN
+    Check_in_Check_out C ON T.ID_Aula = C.ID_Checkin
+GROUP BY
+    I.Nome;
